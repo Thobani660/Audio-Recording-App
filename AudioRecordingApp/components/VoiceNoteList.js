@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
-import { Button, View } from 'react-native';
-import { Audio } from 'expo-av';
+import React from 'react';
+import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 
-export default function VoiceNote({ uri }) {
-  const [sound, setSound] = useState();
-
-  const playSound = async () => {
-    const { sound: playbackObj } = await Audio.Sound.createAsync(
-      { uri },
-      { shouldPlay: true }
-    );
-    setSound(playbackObj);
-  };
-
+const VoiceNoteList = ({ voiceNotes, onDelete, onPlay }) => {
   return (
-    <View style={{ padding: 10 }}>
-      <Button title="Play" onPress={playSound} />
-    </View>
+    <FlatList
+      data={voiceNotes}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <View style={styles.note}>
+          <Text>{item.name}</Text>
+          <Text>{item.date}</Text>
+          <Button title="Play" onPress={() => onPlay(item.uri)} />
+          <Button title="Delete" onPress={() => onDelete(item.id)} />
+        </View>
+      )}
+    />
   );
-}
+};
+
+const styles = StyleSheet.create({
+  note: {
+    padding: 10,
+    marginVertical: 5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+});
+
+export default VoiceNoteList;
